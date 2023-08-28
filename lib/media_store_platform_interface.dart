@@ -27,6 +27,7 @@ abstract class MediaStorePlatform extends PlatformInterface {
     required DirType dirType,
     required DirName dirName,
     required String relativePath,
+    bool removeTempFile = false,
   }) {
     throw UnimplementedError('saveFile() has not been implemented.');
   }

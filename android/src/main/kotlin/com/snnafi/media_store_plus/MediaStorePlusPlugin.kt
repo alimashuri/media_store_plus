@@ -48,6 +48,7 @@ class MediaStorePlusPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private lateinit var uriString: String
     private lateinit var fileName: String
     private lateinit var tempFilePath: String
+    private var removeTempFile: Boolean = false
     private var dirType: Int = 0
     private lateinit var dirName: String
     private lateinit var appFolder: String
@@ -68,7 +69,8 @@ class MediaStorePlusPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                     call.argument("fileName")!!,
                     call.argument("appFolder")!!,
                     call.argument("dirType")!!,
-                    call.argument("dirName")!!
+                    call.argument("dirName")!!,
+                    call.argument("removeTempFile")!!
             )
         } else if (call.method == "deleteFile") {
             deleteFile(
@@ -170,7 +172,8 @@ class MediaStorePlusPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             name: String,
             appFolder: String,
             dirType: Int,
-            dirName: String
+            dirName: String,
+            removeTempFile: Boolean
     ) {
         try {
             this.fileName = name
@@ -178,8 +181,11 @@ class MediaStorePlusPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             this.appFolder = appFolder
             this.dirType = dirType
             this.dirName = dirName
+            this.removeTempFile = removeTempFile
             createOrUpdateFile(path, name, appFolder, dirType, dirName)
-            File(tempFilePath).delete()
+            if (removeTempFile) {
+                File(tempFilePath).delete()
+            }
             result.success(true)
 
         } catch (e: Exception) {
@@ -675,7 +681,8 @@ class MediaStorePlusPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                         fileName,
                         appFolder,
                         dirType,
-                        dirName
+                        dirName,
+                        removeTempFile
                 )
             } else {
                 result.success(false)
